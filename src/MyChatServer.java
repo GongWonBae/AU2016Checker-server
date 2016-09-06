@@ -33,7 +33,7 @@ public class MyChatServer {
                 }
            });
 
-            ChannelFuture f = b.bind(8888).sync();
+            ChannelFuture f = b.bind(8887).sync();
 
             f.channel().closeFuture().sync();
         }
