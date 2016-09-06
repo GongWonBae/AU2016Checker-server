@@ -4,6 +4,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 public class OpenHandler {
+	
 	public OpenHandler(String BeaconJson) {
 			JSONParser jsonParser = new JSONParser();
 			JSONObject jsonObj;
@@ -22,7 +23,7 @@ public class OpenHandler {
 					System.out.println("  ID : " + id);
 					System.out.println("ROOM : " + room );
 					System.out.println("TIME : " + time );
-					System.out.println("CLASSNO2 : " + class_no);					
+					System.out.println("CLASSNO : " + class_no);					
 				}
 				System.out.println("-------Open Constructor End-------");
 			} catch (ParseException e) {
