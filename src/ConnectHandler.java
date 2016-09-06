@@ -72,7 +72,9 @@ public class ConnectHandler extends ChannelInboundHandlerAdapter {
 			}
 			else if(jsonObj.get("OPEN")!=null){
 				OpenHandler OpenObj= new OpenHandler(in.toString(CharsetUtil.UTF_8));
+				OpenObj.OpenDB(SID, con);
 			}
+		
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}

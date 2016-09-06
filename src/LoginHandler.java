@@ -18,7 +18,7 @@ public class LoginHandler {
 		JSONParser jsonParser = new JSONParser();
 		JSONObject jsonObj;
 		try {
-			System.out.println("-------Login Constructor Start-------");
+			System.out.println("-------Login Constructor Start-------"); //생성자는 파싱을 끝내고 sid와 pw를 임시 저장한다.
 			jsonObj = (JSONObject) jsonParser.parse(logJson);
 			JSONArray memberArray = null;
 
@@ -43,7 +43,7 @@ public class LoginHandler {
 		return PW;
 	}
 	public boolean CheckLogin(Connection con){
-		System.out.println("-------Login Check Start-------");
+		System.out.println("-------Login Check Start-------"); 
 		ResultSet rs = null;
 		PreparedStatement psmt = null;
 		try {
