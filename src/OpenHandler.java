@@ -22,7 +22,7 @@ public class OpenHandler {
 					System.out.println("  ID : " + id);
 					System.out.println("ROOM : " + room );
 					System.out.println("TIME : " + time );
-					System.out.println("CLASSNO : " + class_no);					
+					System.out.println("CLASSNO2 : " + class_no);					
 				}
 				System.out.println("-------Open Constructor End-------");
 			} catch (ParseException e) {
