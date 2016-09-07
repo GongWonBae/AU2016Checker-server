@@ -25,7 +25,7 @@ import io.netty.util.CharsetUtil;
 
 public class ConnectHandler extends ChannelInboundHandlerAdapter {
 	
-
+	private String SID=null;
 	@Override
 	public void channelActive(ChannelHandlerContext ctx) throws Exception {
 		System.out.println("Client" + ctx.channel().remoteAddress() + " connected");
@@ -45,7 +45,7 @@ public class ConnectHandler extends ChannelInboundHandlerAdapter {
 		PreparedStatement psmt = null;
 		
 		//////Login 관련 변수/////
-		String SID = null;
+		//String SID = null;
 		String PW = null;
 		JSONParser jsonParser = new JSONParser();
 		
@@ -64,8 +64,8 @@ public class ConnectHandler extends ChannelInboundHandlerAdapter {
 				}
 			}
 			else if(jsonObj.get("SEARCH")!=null){
-				SearchHandler SearchObj = new SearchHandler(SID,in.toString(CharsetUtil.UTF_8));
-				
+				SearchHandler SearchObj = new SearchHandler(SID,in.toString(CharsetUtil.UTF_8),con);
+				ctx.writeAndFlush(SearchObj.getSearchResultJson());
 			}
 			else if(jsonObj.get("BEACON")!=null){
 				BeaconHandler BeaconObj = new BeaconHandler(in.toString(CharsetUtil.UTF_8));	

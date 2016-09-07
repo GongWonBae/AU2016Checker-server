@@ -63,8 +63,6 @@ public class OpenHandler {
 		// 
 		
 	}
-	public void MakeAndSendJson(){
-		
-	}
+	
 	
 }
