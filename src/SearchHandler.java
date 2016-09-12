@@ -33,7 +33,7 @@ public class SearchHandler {
 					String classid = rs.getString(i++);
 					String classno = rs.getString(i++);
 					String classname= rs.getString(i++);
-					System.out.println(classid + " " + classno + " " + classname + " ");
+					//System.out.println(classid + " " + classno + " " + classname + " ");
 					jobj.put("CLASS_NAME",classname);
 					jobj.put("CLASS_NO",classno);
 					jobj.put("CLASS_ID",classid);

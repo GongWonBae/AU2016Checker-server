@@ -58,14 +58,15 @@ public class ConnectHandler extends ChannelInboundHandlerAdapter {
 				SID=loginInfo.getSID();
 				PW=loginInfo.getPW();
 				if(loginInfo.CheckLogin(con)){
-					ctx.writeAndFlush(Unpooled.copiedBuffer("TRUE",CharsetUtil.UTF_8));
+					ctx.writeAndFlush(Unpooled.copiedBuffer("TRU2321321E",CharsetUtil.UTF_8));
 				}else{
-					ctx.writeAndFlush(Unpooled.copiedBuffer("FALSE",CharsetUtil.UTF_8));
+					ctx.writeAndFlush(Unpooled.copiedBuffer("FAL321321321SE",CharsetUtil.UTF_8));
 				}
 			}
 			else if(jsonObj.get("SEARCH")!=null){
 				SearchHandler SearchObj = new SearchHandler(SID,in.toString(CharsetUtil.UTF_8),con);
-				ctx.writeAndFlush(SearchObj.getSearchResultJson());
+			//	ctx.writeAndFlush(SearchObj.getSearchResultJson());
+				ctx.writeAndFlush(Unpooled.copiedBuffer(SearchObj.getSearchResultJson(),CharsetUtil.UTF_8));
 			}
 			else if(jsonObj.get("BEACON")!=null){
 				BeaconHandler BeaconObj = new BeaconHandler(in.toString(CharsetUtil.UTF_8));	
@@ -80,7 +81,7 @@ public class ConnectHandler extends ChannelInboundHandlerAdapter {
 		}
 		// ChannelPipeline cpl=ctx.pipeline();
 		// cpl.write(Unpooled.copiedBuffer("TRUE",CharsetUtil.UTF_8));
-		//ctx.write(in);
+		//ctx.writeAndFlush(in);
 		// ctx.write(Unpooled.copiedBuffer("netty",CharsetUtil.UTF_8));
 		// cpl.
 	}

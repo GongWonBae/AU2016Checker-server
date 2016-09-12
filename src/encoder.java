@@ -30,20 +30,21 @@ public class encoder extends MessageToMessageEncoder<ByteBuf>{
 
 	@Override
 	protected void encode(ChannelHandlerContext ctx, ByteBuf msg, List<Object> out) throws Exception {
-		System.out.println("encode");
+	   System.out.println("encode");
 		System.out.println("encode data : "+msg.toString(CharsetUtil.UTF_8));
 		System.out.println("읽을수있는 바이트 수 : "+String.valueOf(msg.readableBytes()));
-		String teststr="netty공";
-		String lien = "\r\n";
+		String lien = "\n";
 		ByteBuf result= Unpooled.buffer();
 		result.writeShort(msg.readableBytes()+lien.getBytes().length); //길이헤더 추가
-		//result.writeShort(teststr.getBytes().length);
+		//result.writeShort(msg.readableBytes());
 		result.writeBytes(msg);
-		result.writeBytes("\r\n".getBytes());
+		result.writeBytes("\n".getBytes());
 		System.out.println(result.toString(CharsetUtil.UTF_8));
+		msg.release();
 		ctx.writeAndFlush(result);
-		
-		//결국 클라이언트가 받을수있는 인코딩작업이 필요함
+		result.release();
+	
+		//을수있는 인코딩작업이 필요함
 	
 	}
 
@@ -54,6 +55,7 @@ public class encoder extends MessageToMessageEncoder<ByteBuf>{
 		System.out.println("test");
 		if (in.readableBytes() >= 2) {
 			out.add(in.readChar());
+			
 		}
 	}*/
 

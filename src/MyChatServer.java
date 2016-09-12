@@ -1,4 +1,6 @@
 
+import java.util.concurrent.TimeUnit;
+
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -10,6 +12,7 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
+import io.netty.handler.timeout.IdleStateHandler;
 
 public class MyChatServer {
     public static void main(String[] args) throws Exception {
@@ -29,12 +32,13 @@ public class MyChatServer {
                     p.addLast(new decorder(1024*64, 0, 2,0, 2)); //길이제거+또다른 decode
                     p.addLast(new encoder()); //보낼때 호출됨 encode해서 보내기
                     p.addLast(new ConnectHandler());  //비지니스 로직 구성하기
-                    
+               //     p.addLast(new IdleStateHandler(0, 0, 1, TimeUnit.SECONDS));  
                 }
            });
 
-            ChannelFuture f = b.bind(8887).sync();
+            ChannelFuture f = b.bind(8888).sync();
 
+            
             f.channel().closeFuture().sync();
         }
         finally {
