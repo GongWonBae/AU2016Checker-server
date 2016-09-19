@@ -58,14 +58,14 @@ public class ConnectHandler extends ChannelInboundHandlerAdapter {
 				SID=loginInfo.getSID();
 				PW=loginInfo.getPW();
 				if(loginInfo.CheckLogin(con)){
-					ctx.writeAndFlush(Unpooled.copiedBuffer("TRU2321321E",CharsetUtil.UTF_8));
+					ctx.writeAndFlush(Unpooled.copiedBuffer("TRUE",CharsetUtil.UTF_8));
 				}else{
-					ctx.writeAndFlush(Unpooled.copiedBuffer("FAL321321321SE",CharsetUtil.UTF_8));
+					ctx.writeAndFlush(Unpooled.copiedBuffer("FALSE",CharsetUtil.UTF_8));
 				}
 			}
 			else if(jsonObj.get("SEARCH")!=null){
 				SearchHandler SearchObj = new SearchHandler(SID,in.toString(CharsetUtil.UTF_8),con);
-			//	ctx.writeAndFlush(SearchObj.getSearchResultJson());
+				//SearchHandler SearchObj = new SearchHandler("201131046",in.toString(CharsetUtil.UTF_8),con);
 				ctx.writeAndFlush(Unpooled.copiedBuffer(SearchObj.getSearchResultJson(),CharsetUtil.UTF_8));
 			}
 			else if(jsonObj.get("BEACON")!=null){
@@ -74,6 +74,7 @@ public class ConnectHandler extends ChannelInboundHandlerAdapter {
 			else if(jsonObj.get("OPEN")!=null){
 				OpenHandler OpenObj= new OpenHandler(in.toString(CharsetUtil.UTF_8));
 				OpenObj.OpenDB(SID, con);
+				//OpenObj.OpenDB("201131046", con);
 			}
 		
 		} catch (ParseException e) {
