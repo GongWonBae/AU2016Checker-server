@@ -15,7 +15,7 @@ public class BeaconHandler {
 				memberArray = (JSONArray) jsonObj.get("BEACON");
 				for (int i = 0; i < memberArray.size(); i++) {
 					JSONObject tempObj = (JSONObject) memberArray.get(i);
-					String id = tempObj.get("ID").toString();
+					String id = tempObj.get("SID").toString();
 					String phone = tempObj.get("PHONE").toString();
 				
 					System.out.println("  ID : " + id);
