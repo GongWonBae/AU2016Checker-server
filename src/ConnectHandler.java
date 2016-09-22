@@ -70,6 +70,7 @@ public class ConnectHandler extends ChannelInboundHandlerAdapter {
 			}
 			else if(jsonObj.get("BEACON")!=null){
 				BeaconHandler BeaconObj = new BeaconHandler(in.toString(CharsetUtil.UTF_8));	
+				BeaconObj.judgement(SID, con);
 			}
 			else if(jsonObj.get("OPEN")!=null){
 				OpenHandler OpenObj= new OpenHandler(in.toString(CharsetUtil.UTF_8));
