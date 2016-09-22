@@ -22,10 +22,11 @@ public class BeaconHandler {
 	String result=null;
 	beaconinfo foundbeaon_info []=null;
 	String checker = null;
+	String merge=null;
 	public BeaconHandler(String BeaconJson) {
 		JSONParser jsonParser = new JSONParser();
 		JSONObject jsonObj;
-		
+		//cc
 		try {
 			System.out.println("-------Beacon Constructor Start-------");
 			jsonObj = (JSONObject) jsonParser.parse(BeaconJson);
