@@ -8,7 +8,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import com.mysql.jdbc.Connection;
-import com.sun.corba.se.impl.protocol.InfoOnlyServantCacheLocalCRDImpl;
+
 
 public class BeaconHandler {
 	private String sid =null;
@@ -17,12 +17,14 @@ public class BeaconHandler {
 	private String class_code =null;
 	private String class_no =null;
 	private String beacon_cnt =null;
+	private String week = null;
+	private String classroom=null;
 	ResultSet rs = null;
 	PreparedStatement psmt = null;
 	String result=null;
 	beaconinfo foundbeaon_info []=null;
 	String checker = null;
-	String merge=null;
+	int checker_flag =-1;
 	public BeaconHandler(String BeaconJson) {
 		JSONParser jsonParser = new JSONParser();
 		JSONObject jsonObj;
@@ -41,8 +43,8 @@ public class BeaconHandler {
 				this.class_code=tempObj.get("CLASS_CODE").toString();
 				this.class_no=tempObj.get("CLASS_NO").toString();
 				this.nowtime=tempObj.get("NOWTIME").toString();
-				
-				
+				this.week=tempObj.get("WEEK").toString();
+				this.classroom=tempObj.get("CLASSROOM").toString();
 				System.out.println(" SID : " + sid);
 				System.out.println("PHONE : " + phone );
 				System.out.println("CLASS_CODE : " + class_code );
@@ -89,8 +91,10 @@ public class BeaconHandler {
 		PreparedStatement psmt = null;
 		if(foundbeaon_info!=null){
 			try {
-				psmt = con.prepareStatement("select beacon_list.uuid , beacon_list.major , beacon_list.minor , beacon_list.distance from beacon_list, classroom where beacon_list.class_id = classroom.classroom_id");
+				psmt = con.prepareStatement("select beacon_list.uuid , beacon_list.major , beacon_list.minor , beacon_list.distance from beacon_list, classroom where beacon_list.class_id = classroom.classroom_id and classroom.classroom_id = ? ");
+				psmt.setString(1, classroom);
 				rs = psmt.executeQuery();
+				int k=0;
 				while (rs.next()) {
 					int i = 1;
 					String tempuuid = rs.getString(i++);
@@ -102,17 +106,24 @@ public class BeaconHandler {
 						if(tempuuid.equals(foundbeaon_info[j].uuid) && tempmajor==foundbeaon_info[j].major && tempminor==foundbeaon_info[j].minor){
 							if(foundbeaon_info[j].distance<=tempdistance){
 								checker="OK";
+								checker_flag=0;
+								System.out.println("Ã£À½");
 								break;
 							}
 							else {
 								checker = "too far distance";
+								checker_flag=1;
+								break;
 							}
 						}
 						else{
 							checker ="can not find beacon of your class";
+							checker_flag=2;
 						}
 							
 					}
+				k++;
+				System.out.println(k);
 				}
 			} catch (SQLException sqex) {
 				System.out.println("SQLException: " + sqex.getMessage());
@@ -121,6 +132,30 @@ public class BeaconHandler {
 		}
 		
 	}
+
+	public String getSendAndupdateDb(Connection con) {
+		ResultSet rs = null;
+		PreparedStatement psmt = null;
+		try {
+			if (checker_flag == 0) {
+				psmt = con.prepareStatement("insert into result values (?,?,?,null,null,null,null)");
+				psmt.setString(1, sid);
+				psmt.setString(2, class_code);
+				psmt.setString(3, week);
+				if (psmt.executeUpdate() == 0) {
+					System.out.println("Open DB is not updated..");
+				}
+				return checker;
+			} else {
+				return checker;
+			}
+		} catch (SQLException sqex) {
+			System.out.println("SQLException: " + sqex.getMessage());
+			System.out.println("SQLState: " + sqex.getSQLState());
+		}
+		return "Beacon handler getSendAndupdateDb is not working";
+	}
+
 	public class beaconinfo {
 		public String uuid=null;
 		public int major=0;
