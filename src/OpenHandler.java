@@ -11,7 +11,7 @@ public class OpenHandler {
 	private String room =null;
 	private String time =null;
 	private String class_no =null;
-	
+	private String week=null;
 	public OpenHandler(String BeaconJson) {
 			JSONParser jsonParser = new JSONParser();
 			JSONObject jsonObj;
@@ -27,6 +27,7 @@ public class OpenHandler {
 					room = tempObj.get("ROOM").toString();
 					time = tempObj.get("TIME").toString();
 					class_no = tempObj.get("CLASS_NO").toString();
+					week = tempObj.get("WEEK").toString();
 					System.out.println("  ID : " + id);
 					System.out.println("ROOM : " + room );
 					System.out.println("TIME : " + time );
@@ -45,7 +46,7 @@ public class OpenHandler {
 		
 			try {
 				//psmt = con.prepareStatement("insert into classlog values ('AN1025','b903', '01','31', 'false', null)");
-				psmt = con.prepareStatement("insert into classlog values (?,?, ?,?, 'false', null)");
+				psmt = con.prepareStatement("insert into classlog values (?,?, ?,?, 'false', null,?)");
 				psmt.setString(1, id);
 				psmt.setString(2, room);
 				psmt.setString(3, class_no);
