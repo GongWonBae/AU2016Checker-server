@@ -2,7 +2,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-
+//ddd
 public class BeaconHandler {
 	public BeaconHandler(String BeaconJson) {
 			JSONParser jsonParser = new JSONParser();
