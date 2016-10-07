@@ -71,5 +71,33 @@ public class LoginHandler {
 		System.out.println("-------Login Check End [False]-------");
 		return false;
 	}
+	public String SetLoginResultJson(boolean Logresult){
+		String str =null;
+		JSONObject Jsonobj = new JSONObject();
+		JSONObject jobj = null;
+		JSONArray jarry=new JSONArray();
+		if(Logresult==true){	
+			jobj = new JSONObject();
+			jobj.put("LOGFLAG","TRUE");	
+			jarry= new JSONArray();
+			jarry.add(jobj);
+			
+			Jsonobj=new JSONObject();
+			Jsonobj.put("LOGIN_RESULT", jarry);
+			str =Jsonobj.toJSONString();
+		
+		}else{
+			jobj = new JSONObject();
+			jobj.put("LOGFLAG","FALSE");	
+			jarry= new JSONArray();
+			jarry.add(jobj);
+			
+			Jsonobj=new JSONObject();
+			Jsonobj.put("LOGIN_RESULT", jarry);
+			str =Jsonobj.toJSONString();
+		}
+		System.out.println("SetLoginResultJson : "+str);
+		return str;
+	}
 	
 }

@@ -57,11 +57,8 @@ public class ConnectHandler extends ChannelInboundHandlerAdapter {
 				LoginHandler loginInfo = new LoginHandler(in.toString(CharsetUtil.UTF_8));
 				SID=loginInfo.getSID();
 				PW=loginInfo.getPW();
-				if(loginInfo.CheckLogin(con)){
-					ctx.writeAndFlush(Unpooled.copiedBuffer("TRUE",CharsetUtil.UTF_8));
-				}else{
-					ctx.writeAndFlush(Unpooled.copiedBuffer("FALSE",CharsetUtil.UTF_8));
-				}
+				loginInfo.SetLoginResultJson(loginInfo.CheckLogin(con));
+				ctx.writeAndFlush(Unpooled.copiedBuffer(loginInfo.SetLoginResultJson(loginInfo.CheckLogin(con)),CharsetUtil.UTF_8));
 			}
 			else if(jsonObj.get("SEARCH")!=null){
 				SearchHandler SearchObj = new SearchHandler(SID,in.toString(CharsetUtil.UTF_8),con);
