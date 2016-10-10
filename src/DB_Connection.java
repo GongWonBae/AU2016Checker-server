@@ -8,7 +8,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-public class DAO {
+public class DB_Connection {
 	public String db_ip =null;
 	public String port = null;
 	public String db_id = null;
@@ -30,7 +30,7 @@ public class DAO {
 		 
 	}*/
 	/* 생성자2  // 디폴트 DB서버 */
-	public  DAO() {
+	public  DB_Connection() {
 		 init();
 	}
 	private void init() { //드라이버 로딩 메서트

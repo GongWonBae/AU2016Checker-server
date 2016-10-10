@@ -23,7 +23,7 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http2.internal.hpack.Decoder;
 import io.netty.util.CharsetUtil;
 
-public class ConnectHandler extends ChannelInboundHandlerAdapter {
+public class MainLogicHandler extends ChannelInboundHandlerAdapter {
 	
 	private String SID=null;
 	@Override
@@ -37,7 +37,7 @@ public class ConnectHandler extends ChannelInboundHandlerAdapter {
 		System.out.println("Server received: " + in.toString(CharsetUtil.UTF_8));
 	
 		/////DB관련 변수/////
-		DAO mydao = new DAO();
+		DB_Connection mydao = new DB_Connection();
 		Connection con = null;
 		con = (Connection) mydao.getMyConnection();
 		java.sql.Statement st = null;
@@ -56,7 +56,6 @@ public class ConnectHandler extends ChannelInboundHandlerAdapter {
 			if (jsonObj.get("Login") != null) {
 				LoginHandler loginInfo = new LoginHandler(in.toString(CharsetUtil.UTF_8));
 				SID=loginInfo.getSID();
-				PW=loginInfo.getPW();
 				loginInfo.SetLoginResultJson(loginInfo.CheckLogin(con));
 				ctx.writeAndFlush(Unpooled.copiedBuffer(loginInfo.SetLoginResultJson(loginInfo.CheckLogin(con)),CharsetUtil.UTF_8));
 			}
