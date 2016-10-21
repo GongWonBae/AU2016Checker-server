@@ -23,8 +23,15 @@ public class SearchHandler {
 		ArrayList<String> jsonlist = new ArrayList<String>();
 		try {
 			//psmt = con.prepareStatement("select * from take,classlog where classlog.class_id=take.class_id and take.student_id='201131046' and classlog.available ='true'");
-			psmt = con.prepareStatement("select class.class_id, classlog.class_no, class.name, classlog.classroom_id from take,classlog, class  where classlog.class_id=take.class_id and take.student_id=? and classlog.available ='true' and class.class_id=classlog.class_id");
+			psmt = con.prepareStatement("select class.class_id, classlog.class_no, class.name, classlog.classroom_id, classlog.week, classlog.ctime "
+					+ "from take,classlog, class  " 
+					+ "where classlog.class_id=take.class_id and "
+					+ "take.student_id=? and "  //해당학생이 수강하는 목록중에
+					+ "classlog.available ='true' and "
+					+ "class.class_id=classlog.class_id and"
+					+ "class.class_no=classlog.class_no ");
 			psmt.setString(1, sid);
+			
 			rs = psmt.executeQuery();
 			if(rs.next()){
 				do {
@@ -34,11 +41,15 @@ public class SearchHandler {
 					String classno = rs.getString(i++);
 					String classname= rs.getString(i++);
 					String classroom= rs.getString(i++);
+					String week =rs.getString(i++);
+					String ctime = rs.getString(i++);
 					System.out.println(classid + " " + classno + " " + classname + " "+classroom);
 					jobj.put("CLASS_NAME",classname);
 					jobj.put("CLASS_NO",classno);
 					jobj.put("CLASS_ID",classid);
 					jobj.put("CLASS_ROOM",classroom);
+					jobj.put("WEEK", week);
+					jobj.put("CTIME", ctime);
 					jarry.add(jobj);
 					subject_num++;
 				}while (rs.next());

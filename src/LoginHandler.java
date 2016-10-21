@@ -14,6 +14,7 @@ import io.netty.util.CharsetUtil;
 public class LoginHandler {
 	private String SID=null;
 	private String PW=null;
+	private String name=null;
 	public LoginHandler(String logJson) {
 		JSONParser jsonParser = new JSONParser();
 		JSONObject jsonObj;
@@ -42,6 +43,9 @@ public class LoginHandler {
 	public String getPW(){
 		return PW;
 	}
+	public String getname(){
+		return name;
+	}
 	public boolean CheckLogin(Connection con){
 		System.out.println("-------Login Check Start-------"); 
 		ResultSet rs = null;
@@ -53,7 +57,7 @@ public class LoginHandler {
 				int i = 1;
 				String id = rs.getString(i++);
 				String pw = rs.getString(i++);
-				String name = rs.getString(i++);
+				this.name = rs.getString(i++);
 				String phone = rs.getString(i++);
 				String major = rs.getString(i++);
 				String type = rs.getString(i++);
@@ -62,6 +66,8 @@ public class LoginHandler {
 					System.out.println(id + " " + pw + " " + name + " " + phone + " " + major + " " + type);
 					System.out.println("-------Login Check End [True]-------");
 					return true;
+				}else{
+					name=null;
 				}
 			}
 		} catch (SQLException sqex) {
@@ -78,7 +84,8 @@ public class LoginHandler {
 		JSONArray jarry=new JSONArray();
 		if(Logresult==true){	
 			jobj = new JSONObject();
-			jobj.put("LOGFLAG","TRUE");	
+			jobj.put("LOGFLAG","TRUE");
+			jobj.put("NAME", name);
 			jarry= new JSONArray();
 			jarry.add(jobj);
 			
@@ -88,7 +95,8 @@ public class LoginHandler {
 		
 		}else{
 			jobj = new JSONObject();
-			jobj.put("LOGFLAG","FALSE");	
+			jobj.put("LOGFLAG","FALSE");
+			jobj.put("NAME", name);
 			jarry= new JSONArray();
 			jarry.add(jobj);
 			

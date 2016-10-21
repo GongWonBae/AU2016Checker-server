@@ -65,9 +65,8 @@ public class MainLogicHandler extends ChannelInboundHandlerAdapter {
 				ctx.writeAndFlush(Unpooled.copiedBuffer(SearchObj.getSearchResultJson(),CharsetUtil.UTF_8));
 			}
 			else if(jsonObj.get("BEACON")!=null){
-				BeaconHandler BeaconObj = new BeaconHandler(in.toString(CharsetUtil.UTF_8));	
-				BeaconObj.judgement(SID, con);
-				ctx.writeAndFlush(Unpooled.copiedBuffer(BeaconObj.getSendAndupdateDb(con),CharsetUtil.UTF_8));
+				BeaconHandler BeaconObj = new BeaconHandler(in.toString(CharsetUtil.UTF_8));
+				ctx.writeAndFlush(Unpooled.copiedBuffer(BeaconObj.getSendmsgAndupdateDb(SID,con),CharsetUtil.UTF_8));
 			}
 			else if(jsonObj.get("OPEN")!=null){
 				OpenHandler OpenObj= new OpenHandler(in.toString(CharsetUtil.UTF_8));

@@ -12,19 +12,20 @@ import com.mysql.jdbc.Connection;
 
 public class BeaconHandler {
 	private String sid =null;
-	private String phone =null;
-	private String nowtime =null;
 	private String class_code =null;
 	private String class_no =null;
 	private String beacon_cnt =null;
 	private String week = null;
 	private String classroom=null;
+	private String ctime = null;
+	private String attendflag = null;
+	private int beacon_flag =-1;   //비콘  거리안에 있으면 0  멀면 1, 찾을수 없으면 2
 	ResultSet rs = null;
 	PreparedStatement psmt = null;
 	String result=null;
 	beaconinfo foundbeaon_info []=null;
 	String checker = null;
-	int checker_flag =-1;
+	
 	public BeaconHandler(String BeaconJson) {
 		JSONParser jsonParser = new JSONParser();
 		JSONObject jsonObj;
@@ -38,20 +39,18 @@ public class BeaconHandler {
 			for (int i = 0; i < memberArray.size(); i++) {
 				JSONObject tempObj = (JSONObject) memberArray.get(i);
 				this.sid = tempObj.get("SID").toString();
-				this.phone = tempObj.get("PHONE").toString();
 				this.beacon_cnt=tempObj.get("BEACON_CNT").toString();
 				this.class_code=tempObj.get("CLASS_CODE").toString();
 				this.class_no=tempObj.get("CLASS_NO").toString();
-				this.nowtime=tempObj.get("NOWTIME").toString();
 				this.week=tempObj.get("WEEK").toString();
 				this.classroom=tempObj.get("CLASSROOM").toString();
+				this.ctime=tempObj.get("CTIME").toString();
+				
 				System.out.println(" SID : " + sid);
-				System.out.println("PHONE : " + phone );
 				System.out.println("CLASS_CODE : " + class_code );
 				System.out.println("CLASS_NO : " + class_no );
 				System.out.println("BEACON_CNT : " + beacon_cnt );
-				System.out.println("NOWTIME : " + nowtime );
-			
+				System.out.println("CTIME : "+ ctime);
 				JSONArray infoArray = (JSONArray) tempObj.get("BEACON_INFO"); 
 				
 				System.out.println("감지된 비콘수 : "+infoArray.size());
@@ -86,7 +85,7 @@ public class BeaconHandler {
 		
 	}
 	
-	public void judgement(String sid, Connection con){
+	public void setBeaconflag(String sid, Connection con){
 		ResultSet rs = null;
 		PreparedStatement psmt = null;
 		if(foundbeaon_info!=null){
@@ -106,21 +105,21 @@ public class BeaconHandler {
 						if(tempuuid.equals(foundbeaon_info[j].uuid) && tempmajor==foundbeaon_info[j].major && tempminor==foundbeaon_info[j].minor){
 							if(foundbeaon_info[j].distance<=tempdistance){
 								checker="OK";
-								checker_flag=0;
+								beacon_flag=0;
 								System.out.println("찾음");
 								break;
 							}
 							else {
 								checker = "too far distance";
-								checker_flag=1;
+								beacon_flag=1;
 								break;
 							}
 						}
 						else{
 							checker ="can not find beacon of your class";
-							checker_flag=2;
+							beacon_flag=2;
 						}
-							
+						
 					}
 				k++;
 				System.out.println(k);
@@ -133,18 +132,93 @@ public class BeaconHandler {
 		
 	}
 
-	public String getSendAndupdateDb(Connection con) {
+	public void setAttendflag(String sid, Connection con){
+		
+	}
+	
+	public String getSendmsgAndupdateDb(String sid, Connection con) {
+		setBeaconflag(sid, con);
 		ResultSet rs = null;
 		PreparedStatement psmt = null;
 		try {
-			if (checker_flag == 0) {
-				psmt = con.prepareStatement("insert into result values (?,?,?,null,null,null,null)");
+			if (beacon_flag == 0) {
+				psmt = con.prepareStatement("select * from result where student_id= ? and class_id = ? and class_no = ? and week = ?");
 				psmt.setString(1, sid);
 				psmt.setString(2, class_code);
-				psmt.setString(3, week);
-				if (psmt.executeUpdate() == 0) {
-					System.out.println("Open DB is not updated..");
+				psmt.setString(3, class_no);
+				psmt.setString(4, week);
+				rs = psmt.executeQuery();
+				psmt=null;
+				if (rs.next()) { //이미 저장된 해당 주차 결과값이 있으면 
+					if(Integer.parseInt(ctime)==1){
+						/*psmt = con.prepareStatement("insert into result "
+								+ "(student_id,class_id,class_no, week,ctime1) "
+								+ "values (?,?,?,?,'00')");
+						*/
+						psmt = con.prepareStatement("update result "
+								+ "set ctime1 = '00' "
+								+ "where student_id= ? and class_id = ? and class_no = ? and week = ?");
+						psmt.setString(1, sid);
+						psmt.setString(2, class_code);
+						psmt.setString(3, class_no);
+						psmt.setString(4, week);
+						psmt.executeUpdate();
+					}else if(Integer.parseInt(ctime)==2){
+						psmt = con.prepareStatement("update result "
+								+ "set ctime2 = '00' "
+								+ "where student_id= ? and class_id = ? and class_no = ? and week = ?");
+						psmt.setString(1, sid);
+						psmt.setString(2, class_code);
+						psmt.setString(3, class_no);
+						psmt.setString(4, week);
+						psmt.executeUpdate();
+					}else if(Integer.parseInt(ctime)==3){
+						psmt = con.prepareStatement("update result "
+								+ "set ctime3 = '00' "
+								+ "where student_id= ? and class_id = ? and class_no = ? and week = ?");
+						psmt.setString(1, sid);
+						psmt.setString(2, class_code);
+						psmt.setString(3, class_no);
+						psmt.setString(4, week);
+						psmt.executeUpdate();
+					}
+				}else{
+					if(Integer.parseInt(ctime)==1){
+						psmt = con.prepareStatement("insert into result "
+								+ "(student_id,class_id,class_no, week,ctime1) "
+								+ "values (?,?,?,?,'00')");
+						psmt.setString(1, sid);
+						psmt.setString(2, class_code);
+						psmt.setString(3, class_no);
+						psmt.setString(4, week);
+						psmt.executeUpdate();
+					}else if(Integer.parseInt(ctime)==2){
+						psmt = con.prepareStatement("insert into result "
+								+ "(student_id,class_id,class_no, week,ctime2) "
+								+ "values (?,?,?,?,'00')");
+						psmt.setString(1, sid);
+						psmt.setString(2, class_code);
+						psmt.setString(3, class_no);
+						psmt.setString(4, week);
+						psmt.executeUpdate();
+					}else if(Integer.parseInt(ctime)==3){
+						psmt = con.prepareStatement("insert into result "
+								+ "(student_id,class_id,class_no, week,ctime3) "
+								+ "values (?,?,?,?,'00')");
+						psmt.setString(1, sid);
+						psmt.setString(2, class_code);
+						psmt.setString(3, class_no);
+						psmt.setString(4, week);
+						psmt.executeUpdate();
+					}
 				}
+				/*
+				 * 위에서 DB반영 끝내고 아래부분에서 결과값을 만들어 전송한다
+				 */
+				
+				
+				
+				
 				return checker;
 			} else {
 				return checker;
@@ -152,10 +226,13 @@ public class BeaconHandler {
 		} catch (SQLException sqex) {
 			System.out.println("SQLException: " + sqex.getMessage());
 			System.out.println("SQLState: " + sqex.getSQLState());
+			return "Beacon handler getSendAndupdateDb is not working";
 		}
-		return "Beacon handler getSendAndupdateDb is not working";
+		
 	}
-
+	
+	
+	
 	public class beaconinfo {
 		public String uuid=null;
 		public int major=0;
