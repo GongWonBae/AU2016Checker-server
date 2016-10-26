@@ -1,6 +1,7 @@
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -17,19 +18,21 @@ public class BeaconHandler {
 	private String week = null;
 	private String classroom = null;
 	private String ctime = null;
-	private String attendflag = null;
+	private String attend_flag = null;
 	private int beacon_flag = -1; // 비콘 거리안에 있으면 0 멀면 1, 찾을수 없으면 2
-	private Connection con= null;
+	private Connection con = null;
+	int LATE_TIME_SECOND = 900; // 900초 15분
 	ResultSet rs = null;
 	PreparedStatement psmt = null;
 	String result = null;
 	beaconinfo foundbeaon_info[] = null;
 	String checker = null;
 
-	public BeaconHandler(String BeaconJson, Connection con) {
+	public BeaconHandler(String BeaconJson, Connection con, String sid) {
 		JSONParser jsonParser = new JSONParser();
 		JSONObject jsonObj;
-		this.con=con;
+		this.con = con;
+		this.sid = sid;
 		// cc
 		try {
 			System.out.println("-------Beacon Constructor Start-------");
@@ -39,7 +42,6 @@ public class BeaconHandler {
 			memberArray = (JSONArray) jsonObj.get("BEACON");
 			for (int i = 0; i < memberArray.size(); i++) {
 				JSONObject tempObj = (JSONObject) memberArray.get(i);
-				this.sid = tempObj.get("SID").toString();
 				this.beacon_cnt = tempObj.get("BEACON_CNT").toString();
 				this.class_code = tempObj.get("CLASS_CODE").toString();
 				this.class_no = tempObj.get("CLASS_NO").toString();
@@ -133,15 +135,27 @@ public class BeaconHandler {
 	}
 
 	public void setAttendflag(String sid, Connection con) {
+		int tempDay = 0;
+		;
+		int tempTime = 0;
 		try {
-			psmt = con.prepareStatement("select to_days(now_time), time_to_sec(now_time) from classlog"
-					+ "where class_id = ? and class_no = ? and ctime = ? and week = ? ");
+			psmt = con.prepareStatement("select to_days(now()), time_to_sec(now())");
 			rs = psmt.executeQuery();
 			while (rs.next()) {
 				int i = 1;
-				String id = rs.getString(i++);
-				String pw = rs.getString(i++);
-				System.out.println(id + " " + pw);
+				tempDay = rs.getInt(i++);
+				tempTime = rs.getInt(i++);
+			}
+			if (tempDay == getDbDay()) {
+				if (tempTime <= getDbTime() + getDb_stime()) {
+					attend_flag = "00"; // 출석
+				} else if (tempTime <= getDbTime() + getDb_stime() + LATE_TIME_SECOND) {
+					attend_flag = "01"; // 지각
+				} else {
+					attend_flag = "11"; // 결석
+				}
+			} else {
+				attend_flag = "11";
 			}
 
 		} catch (SQLException sqex) {
@@ -150,18 +164,22 @@ public class BeaconHandler {
 		}
 	}
 
-	public int getTableDay(){
-		String DAY=null;
-		String TIME=null;
+	public int getDbDay() {
+		String DAY = null;
+		String TIME = null;
 		try {
 			psmt = con.prepareStatement("select to_days(now_time), time_to_sec(now_time) from classlog"
-					+ "where class_id = ? and class_no = ? and ctime = ? and week = ? ");
+					+ " where class_id = ? and class_no = ? and ctime = ? and week = ? ");
+			psmt.setString(1, class_code);
+			psmt.setString(2, class_no);
+			psmt.setString(3, ctime);
+			psmt.setString(4, week);
 			rs = psmt.executeQuery();
 			while (rs.next()) {
 				int i = 1;
-				 DAY = rs.getString(i++);
-				 TIME = rs.getString(i++);
-				 break;
+				DAY = rs.getString(i++);
+				TIME = rs.getString(i++);
+				break;
 			}
 		} catch (SQLException sqex) {
 			System.out.println("SQLException: " + sqex.getMessage());
@@ -169,18 +187,23 @@ public class BeaconHandler {
 		}
 		return Integer.parseInt(DAY);
 	}
-	public int getTableTime(){
-		String DAY=null;
-		String TIME=null;
+
+	public int getDbTime() {
+		String DAY = null;
+		String TIME = null;
 		try {
 			psmt = con.prepareStatement("select to_days(now_time), time_to_sec(now_time) from classlog"
-					+ "where class_id = ? and class_no = ? and ctime = ? and week = ? ");
+					+ " where class_id = ? and class_no = ? and ctime = ? and week = ? ");
+			psmt.setString(1, class_code);
+			psmt.setString(2, class_no);
+			psmt.setString(3, ctime);
+			psmt.setString(4, week);
 			rs = psmt.executeQuery();
 			while (rs.next()) {
 				int i = 1;
-				 DAY = rs.getString(i++);
-				 TIME = rs.getString(i++);
-				 break;
+				DAY = rs.getString(i++);
+				TIME = rs.getString(i++);
+				break;
 			}
 		} catch (SQLException sqex) {
 			System.out.println("SQLException: " + sqex.getMessage());
@@ -188,12 +211,36 @@ public class BeaconHandler {
 		}
 		return Integer.parseInt(TIME);
 	}
-	
-	
-	public String getSendmsgAndupdateDb(String sid, Connection con) {
+
+	public int getDb_stime() {
+
+		String TIME = null;
+		try {
+			psmt = con.prepareStatement(
+					"select s_time from classlog" + " where class_id = ? and class_no = ? and ctime = ? and week = ? ");
+			psmt.setString(1, class_code);
+			psmt.setString(2, class_no);
+			psmt.setString(3, ctime);
+			psmt.setString(4, week);
+			rs = psmt.executeQuery();
+			while (rs.next()) {
+				int i = 1;
+				TIME = rs.getString(i++);
+				break;
+			}
+		} catch (SQLException sqex) {
+			System.out.println("SQLException: " + sqex.getMessage());
+			System.out.println("SQLState: " + sqex.getSQLState());
+		}
+		return Integer.parseInt(TIME);
+	}
+
+	public int attendUpdataDB(String sid, Connection con) {
 		setBeaconflag(sid, con);
+		setAttendflag(sid, con);
 		ResultSet rs = null;
 		PreparedStatement psmt = null;
+		int update_num = 0;
 		try {
 			if (beacon_flag == 0) {
 				psmt = con.prepareStatement(
@@ -211,69 +258,75 @@ public class BeaconHandler {
 						 * "(student_id,class_id,class_no, week,ctime1) " +
 						 * "values (?,?,?,?,'00')");
 						 */
-						psmt = con.prepareStatement("update result " + "set ctime1 = '00' "
+						psmt = con.prepareStatement("update result " + "set ctime1 = ? "
 								+ "where student_id= ? and class_id = ? and class_no = ? and week = ?");
-						psmt.setString(1, sid);
-						psmt.setString(2, class_code);
-						psmt.setString(3, class_no);
-						psmt.setString(4, week);
-						psmt.executeUpdate();
+						psmt.setString(1, attend_flag);
+						psmt.setString(2, sid);
+						psmt.setString(3, class_code);
+						psmt.setString(4, class_no);
+						psmt.setString(5, week);
+						update_num = psmt.executeUpdate();
 					} else if (Integer.parseInt(ctime) == 2) {
-						psmt = con.prepareStatement("update result " + "set ctime2 = '00' "
+						psmt = con.prepareStatement("update result " + "set ctime2 = ? "
 								+ "where student_id= ? and class_id = ? and class_no = ? and week = ?");
-						psmt.setString(1, sid);
-						psmt.setString(2, class_code);
-						psmt.setString(3, class_no);
-						psmt.setString(4, week);
-						psmt.executeUpdate();
+						psmt.setString(1, attend_flag);
+						psmt.setString(2, sid);
+						psmt.setString(3, class_code);
+						psmt.setString(4, class_no);
+						psmt.setString(5, week);
+						update_num = psmt.executeUpdate();
 					} else if (Integer.parseInt(ctime) == 3) {
-						psmt = con.prepareStatement("update result " + "set ctime3 = '00' "
+						psmt = con.prepareStatement("update result " + "set ctime3 = ?  "
 								+ "where student_id= ? and class_id = ? and class_no = ? and week = ?");
-						psmt.setString(1, sid);
-						psmt.setString(2, class_code);
-						psmt.setString(3, class_no);
-						psmt.setString(4, week);
-						psmt.executeUpdate();
+						psmt.setString(1, attend_flag);
+						psmt.setString(2, sid);
+						psmt.setString(3, class_code);
+						psmt.setString(4, class_no);
+						psmt.setString(5, week);
+						update_num = psmt.executeUpdate();
 					}
 				} else {
 					if (Integer.parseInt(ctime) == 1) {
 						psmt = con.prepareStatement("insert into result "
-								+ "(student_id,class_id,class_no, week,ctime1) " + "values (?,?,?,?,'00')");
+								+ "(student_id,class_id,class_no, week,ctime1) " + "values (?,?,?,?,?)");
 						psmt.setString(1, sid);
 						psmt.setString(2, class_code);
 						psmt.setString(3, class_no);
 						psmt.setString(4, week);
-						psmt.executeUpdate();
+						psmt.setString(5, attend_flag);
+						update_num = psmt.executeUpdate();
 					} else if (Integer.parseInt(ctime) == 2) {
 						psmt = con.prepareStatement("insert into result "
-								+ "(student_id,class_id,class_no, week,ctime2) " + "values (?,?,?,?,'00')");
+								+ "(student_id,class_id,class_no, week,ctime2) " + "values (?,?,?,?,?)");
 						psmt.setString(1, sid);
 						psmt.setString(2, class_code);
 						psmt.setString(3, class_no);
 						psmt.setString(4, week);
-						psmt.executeUpdate();
+						psmt.setString(5, attend_flag);
+						update_num = psmt.executeUpdate();
 					} else if (Integer.parseInt(ctime) == 3) {
 						psmt = con.prepareStatement("insert into result "
-								+ "(student_id,class_id,class_no, week,ctime3) " + "values (?,?,?,?,'00')");
+								+ "(student_id,class_id,class_no, week,ctime3) " + "values (?,?,?,?,?)");
 						psmt.setString(1, sid);
 						psmt.setString(2, class_code);
 						psmt.setString(3, class_no);
 						psmt.setString(4, week);
-						psmt.executeUpdate();
+						psmt.setString(5, attend_flag);
+						update_num = psmt.executeUpdate();
 					}
 				}
 				/*
 				 * 위에서 DB반영 끝내고 아래부분에서 결과값을 만들어 전송한다
 				 */
 
-				return checker;
+				return update_num;
 			} else {
-				return checker;
+				return update_num;
 			}
 		} catch (SQLException sqex) {
 			System.out.println("SQLException: " + sqex.getMessage());
 			System.out.println("SQLState: " + sqex.getSQLState());
-			return "Beacon handler getSendAndupdateDb is not working";
+			return update_num;
 		}
 
 	}
@@ -292,4 +345,106 @@ public class BeaconHandler {
 		}
 
 	}
+
+	public String getAttendJson(Connection con) {
+		JSONObject Jsonobj = new JSONObject();
+		JSONArray jarry = new JSONArray();
+		int update_num = 0;
+		String tempctime = null;
+		switch (Integer.parseInt(ctime)) {
+		case 1:
+			tempctime = "ctime1";
+			break;
+		case 2:
+			tempctime = "ctime2";
+			break;
+		case 3:
+			tempctime = "ctime3";
+			break;
+		default:
+			break;
+		}
+
+		try {
+			// psmt = con.prepareStatement("select * from take,classlog where
+			// classlog.class_id=take.class_id and take.student_id='201131046'
+			// and classlog.available ='true'");
+			if(beacon_flag==0){
+			psmt = con.prepareStatement(
+					" select class.class_id, class.class_no, class.name, result.dttm, result.week, result.? "
+							+ "from result, class " + "where class.class_id = result.class_id and "
+							+ "class.class_no = result.class_no and " + "result.student_id = ? and "
+							+ "result.week = ? and class.class_id = ? and class.class_no = ? ");
+			psmt.setString(1, tempctime);
+			psmt.setString(2, sid);
+			psmt.setString(3, week);
+			psmt.setString(4, class_code);
+			psmt.setString(5, class_no);
+			rs = psmt.executeQuery();
+			if (rs.next()) {
+				Jsonobj = new JSONObject();
+				int i = 1;
+				String classid = rs.getString(i++);
+				String classno = rs.getString(i++);
+				String classname = rs.getString(i++);
+				String dttm = rs.getString(i++);
+				String week = rs.getString(i++);
+				String myctime = rs.getString(i++);
+				System.out.println(classid + " " + classno + " " + classname);
+				Jsonobj.put("CLASS_NAME", classname);
+				Jsonobj.put("CLASS_NO", classno);
+				Jsonobj.put("CLASS_ID", classid);
+				Jsonobj.put("WEEK", week);
+				Jsonobj.put("TIME", dttm);
+				Jsonobj.put("BEACON_FLAG", beacon_flag);
+				Jsonobj.put("ATTEND_FLAG", myctime);
+				Jsonobj.put("CTIME",tempctime);
+				jarry = new JSONArray();
+				jarry.add(Jsonobj);
+				Jsonobj = new JSONObject();
+				Jsonobj.put("ATTEND_RESULT", jarry);
+			} else {
+				Jsonobj = new JSONObject();
+				int i = 1;
+				Jsonobj.put("CLASS_NAME", null);
+				Jsonobj.put("CLASS_NO", class_no);
+				Jsonobj.put("CLASS_ID", class_code);
+				Jsonobj.put("WEEK", week);
+				Jsonobj.put("TIME", null);
+				Jsonobj.put("BEACON_FLAG", beacon_flag);
+				Jsonobj.put("ATTEND_FLAG", null);
+				Jsonobj.put("CTIME",tempctime);
+				jarry = new JSONArray();
+				jarry.add(Jsonobj);
+				Jsonobj = new JSONObject();
+				Jsonobj.put("ATTEND_RESULT", jarry);
+
+			}
+			}else{
+				Jsonobj = new JSONObject();
+				int i = 1;
+				Jsonobj.put("CLASS_NAME", null);
+				Jsonobj.put("CLASS_NO", class_no);
+				Jsonobj.put("CLASS_ID", class_code);
+				Jsonobj.put("WEEK", week);
+				Jsonobj.put("TIME", null);
+				Jsonobj.put("BEACON_FLAG", beacon_flag);
+				Jsonobj.put("ATTEND_FLAG", null);
+				Jsonobj.put("CTIME",tempctime);
+				jarry = new JSONArray();
+				jarry.add(Jsonobj);
+				Jsonobj = new JSONObject();
+				Jsonobj.put("ATTEND_RESULT", jarry);
+			}
+			result = Jsonobj.toJSONString();
+			// System.out.println(result);
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return result;
+	}
+
 }

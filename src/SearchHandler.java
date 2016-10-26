@@ -20,16 +20,10 @@ public class SearchHandler {
 		JSONObject Jsonobj = new JSONObject();
 		JSONObject jobj = null;
 		JSONArray jarry=new JSONArray();
-		ArrayList<String> jsonlist = new ArrayList<String>();
+		
 		try {
 			//psmt = con.prepareStatement("select * from take,classlog where classlog.class_id=take.class_id and take.student_id='201131046' and classlog.available ='true'");
-			psmt = con.prepareStatement("select class.class_id, classlog.class_no, class.name, classlog.classroom_id, classlog.week, classlog.ctime "
-					+ "from take,classlog, class  " 
-					+ "where classlog.class_id=take.class_id and "
-					+ "take.student_id=? and "  //해당학생이 수강하는 목록중에
-					+ "classlog.available ='true' and "
-					+ "class.class_id=classlog.class_id and"
-					+ "class.class_no=classlog.class_no ");
+			psmt = con.prepareStatement("select class.class_id, classlog.class_no, class.name, classlog.classroom_id, classlog.week, classlog.ctime from take,classlog, class where classlog.class_id=take.class_id and take.student_id=? and classlog.available ='true' and class.class_id=classlog.class_id and class.class_no=classlog.class_no ");
 			psmt.setString(1, sid);
 			
 			rs = psmt.executeQuery();

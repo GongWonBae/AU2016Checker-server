@@ -64,10 +64,12 @@ public class MainLogicHandler extends ChannelInboundHandlerAdapter {
 				//SearchHandler SearchObj = new SearchHandler("201131046",in.toString(CharsetUtil.UTF_8),con);
 				ctx.writeAndFlush(Unpooled.copiedBuffer(SearchObj.getSearchResultJson(),CharsetUtil.UTF_8));
 			}
-			/*else if(jsonObj.get("BEACON")!=null){
-				BeaconHandler BeaconObj = new BeaconHandler(in.toString(CharsetUtil.UTF_8));
-				ctx.writeAndFlush(Unpooled.copiedBuffer(BeaconObj.getSendmsgAndupdateDb(SID,con),CharsetUtil.UTF_8));
-			}*/
+			else if(jsonObj.get("BEACON")!=null){
+				BeaconHandler BeaconObj = new BeaconHandler(in.toString(CharsetUtil.UTF_8),con);
+				BeaconObj.attendUpdataDB(SID, con);
+				
+				ctx.writeAndFlush(Unpooled.copiedBuffer(BeaconObj.getAttendJson(con),CharsetUtil.UTF_8));
+			}
 			else if(jsonObj.get("OPEN")!=null){
 				OpenHandler OpenObj= new OpenHandler(in.toString(CharsetUtil.UTF_8));
 				OpenObj.OpenDB(SID, con);
