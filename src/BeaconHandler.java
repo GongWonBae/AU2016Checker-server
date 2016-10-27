@@ -136,7 +136,7 @@ public class BeaconHandler {
 
 	public void setAttendflag(String sid, Connection con) {
 		int tempDay = 0;
-		;
+		
 		int tempTime = 0;
 		try {
 			psmt = con.prepareStatement("select to_days(now()), time_to_sec(now())");
@@ -240,17 +240,18 @@ public class BeaconHandler {
 		setAttendflag(sid, con);
 		ResultSet rs = null;
 		PreparedStatement psmt = null;
+		System.out.println("TEST : "+Integer.parseInt(ctime));
 		int update_num = 0;
 		try {
 			if (beacon_flag == 0) {
-				psmt = con.prepareStatement(
-						"select * from result where student_id= ? and class_id = ? and class_no = ? and week = ?");
+				psmt = con.prepareStatement("select * from result where student_id= ? and class_id = ? and class_no = ? and week = ?");
 				psmt.setString(1, sid);
 				psmt.setString(2, class_code);
 				psmt.setString(3, class_no);
 				psmt.setString(4, week);
 				rs = psmt.executeQuery();
-				psmt = null;
+				//psmt = null;
+				System.out.println("LIEN test");
 				if (rs.next()) { // 이미 저장된 해당 주차 결과값이 있으면
 					if (Integer.parseInt(ctime) == 1) {
 						/*
@@ -351,26 +352,43 @@ public class BeaconHandler {
 		JSONArray jarry = new JSONArray();
 		int update_num = 0;
 		String tempctime = null;
-		switch (Integer.parseInt(ctime)) {
-		case 1:
-			tempctime = "ctime1";
-			break;
-		case 2:
-			tempctime = "ctime2";
-			break;
-		case 3:
-			tempctime = "ctime3";
-			break;
-		default:
-			break;
-		}
+		System.out.println("첵쿠!");
+		
 
 		try {
 			// psmt = con.prepareStatement("select * from take,classlog where
 			// classlog.class_id=take.class_id and take.student_id='201131046'
 			// and classlog.available ='true'");
 			if(beacon_flag==0){
-			psmt = con.prepareStatement(
+		
+				switch (Integer.parseInt(ctime)) {
+				case 1:
+					psmt = con.prepareStatement(
+							" select class.class_id, class.class_no, class.name, result.dttm, result.week, result.ctime1 "
+									+ "from result, class " + "where class.class_id = result.class_id and "
+									+ "class.class_no = result.class_no and " + "result.student_id = ? and "
+									+ "result.week = ? and class.class_id = ? and class.class_no = ? ");
+					break;
+				case 2:
+					psmt = con.prepareStatement(
+							" select class.class_id, class.class_no, class.name, result.dttm, result.week, result.ctime2 "
+									+ "from result, class " + "where class.class_id = result.class_id and "
+									+ "class.class_no = result.class_no and " + "result.student_id = ? and "
+									+ "result.week = ? and class.class_id = ? and class.class_no = ? ");
+					break;
+				case 3:
+					psmt = con.prepareStatement(
+							" select class.class_id, class.class_no, class.name, result.dttm, result.week, result.ctime3 "
+									+ "from result, class " + "where class.class_id = result.class_id and "
+									+ "class.class_no = result.class_no and " + "result.student_id = ? and "
+									+ "result.week = ? and class.class_id = ? and class.class_no = ? ");
+					break;
+				default:
+					break;
+				}
+				
+			
+		/*	psmt = con.prepareStatement(
 					" select class.class_id, class.class_no, class.name, result.dttm, result.week, result.? "
 							+ "from result, class " + "where class.class_id = result.class_id and "
 							+ "class.class_no = result.class_no and " + "result.student_id = ? and "
@@ -379,9 +397,15 @@ public class BeaconHandler {
 			psmt.setString(2, sid);
 			psmt.setString(3, week);
 			psmt.setString(4, class_code);
-			psmt.setString(5, class_no);
+			psmt.setString(5, class_no);*/
+			psmt.setString(1, sid);
+			psmt.setString(2, week);
+			psmt.setString(3, class_code);
+			psmt.setString(4, class_no);
+			
 			rs = psmt.executeQuery();
 			if (rs.next()) {
+				System.out.println("test");
 				Jsonobj = new JSONObject();
 				int i = 1;
 				String classid = rs.getString(i++);
