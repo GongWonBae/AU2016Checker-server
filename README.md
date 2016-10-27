@@ -1,4 +1,4 @@
-# OPEN JSON
+# OPEN JSON (web->server)
 <pre><code>
 {
   "OPEN": [
@@ -13,8 +13,7 @@
   ]
 }
 </code></pre>
-
-# LOGIN JSON
+# LOGIN JSON (android -> server)
 <pre><code>
 {
   "LOGIN": [
@@ -26,7 +25,7 @@
 }
 </code></pre>
 
-# LOGIN_RESULT JSON
+# LOGIN_RESULT JSON (server -> android)
 <pre><code>
 {
   "LOGIN_RESULT": [
@@ -38,7 +37,17 @@
 }
 </code></pre>
 
-# SEARCH JSON
+# SEARCH JSON (android -> server)
+<pre><code>
+{
+  "SEARCH": [
+    {
+      "SID": "201131046"
+    }
+  ]
+}
+</code></pre>
+# SEARCH_RESULT JSON (server -> android)
 <pre><code>
 {
   "SEARCH_RESULT": [
@@ -66,13 +75,11 @@
   ]
 }
 </code></pre>
-
-# BEACON JSON 
+# BEACON JSON (android -> server)
 <pre><code>
  {
   " BEACON": [
     {
-      " SID": " 201131046",
       " CLASS_CODE": " AN0044",
       " CLASS_NO": " 01",
       " CLASSROOM": " A607",
@@ -109,7 +116,6 @@
   ]
 }
 </code></pre>
-
 # ATTEND JSON (server -> android)
 <pre><code>
  {
@@ -127,3 +133,7 @@
   ]
 }
 </code></pre>
+
+
+
+
