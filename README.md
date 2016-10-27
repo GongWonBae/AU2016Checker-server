@@ -1,5 +1,5 @@
-OPEN JSON (web->server)
-
+# OPEN JSON
+<pre><code>
 {
   "OPEN": [
     {
@@ -12,9 +12,10 @@ OPEN JSON (web->server)
     }
   ]
 }
+</code></pre>
 
-LOGIN JSON (android -> server)
-
+# LOGIN JSON
+<pre><code>
 {
   "LOGIN": [
     {
@@ -23,31 +24,22 @@ LOGIN JSON (android -> server)
     }
   ]
 }
+</code></pre>
 
-LOGIN_RESULT JSON (server -> android)
-
+# LOGIN_RESULT JSON
+<pre><code>
 {
   "LOGIN_RESULT": [
     {
       "LOGFLAG": "TRUE OR FALSE",
-      "NAME": "°ø¿ø¹è"
+      "NAME": "ê³µì›ë°°"
     }
   ]
 }
+</code></pre>
 
-SEARCH JSON (android -> server)
-
-{
-  "SEARCH": [
-    {
-      "SID": "201131046"
-    }
-  ]
-}
-
-
-SEARCH_RESULT JSON (server -> android)
-
+# SEARCH JSON
+<pre><code>
 {
   "SEARCH_RESULT": [
     {
@@ -56,7 +48,7 @@ SEARCH_RESULT JSON (server -> android)
         {
           "CLASS_NO": "01",
           "CLASS_ROOM": "d302",
-          "CLASS_NAME": "¸ð¹ÙÀÏ¾Û",
+          "CLASS_NAME": "ëª¨ë°”ì¼ì•±",
           "CLASS_ID": "AN0044",
           "WEEK": "3",
           "CTIME": "2"
@@ -64,7 +56,7 @@ SEARCH_RESULT JSON (server -> android)
         {
           "CLASS_NO": "01",
           "CLASS_ROOM": "a607",
-          "CLASS_NAME": "ÇÁ·ÎÁ§Æ®¼³°è",
+          "CLASS_NAME": "í”„ë¡œì íŠ¸ì„¤ê³„",
           "CLASS_ID": "NA7028",
           "WEEK": "3",
           "CTIME": "2"
@@ -73,12 +65,14 @@ SEARCH_RESULT JSON (server -> android)
     }
   ]
 }
+</code></pre>
 
-BEACON JSON (android -> server)
-
+# BEACON JSON 
+<pre><code>
  {
   " BEACON": [
     {
+      " SID": " 201131046",
       " CLASS_CODE": " AN0044",
       " CLASS_NO": " 01",
       " CLASSROOM": " A607",
@@ -114,21 +108,22 @@ BEACON JSON (android -> server)
     }
   ]
 }
+</code></pre>
 
-
-ATTEND JSON (server -> android)
-
+# ATTEND JSON (server -> android)
+<pre><code>
  {
   "ATTEND": [
     {
       "TIME": "yy:mm:dd:HH:MM:SS",
-      "BEACON_FLAG": "1/2/3/",           //1(ºñÄÜÀ»Ã£À½), 2(°Å¸®¹Û¿¡ ºñÄÜ °¨Áö), 3(ºñÄÜÀ» Ã£À»¼ö ¾øÀ½)
-      "ATTEND_FLAG": "00/01/10/11",   //00(Ãâ¼®), 01(Áö°¢), 10(À¯°í), 11(°á¼®)
+      "BEACON_FLAG": "1/2/3/",           //1(ë¹„ì½˜ì„ì°¾ìŒ), 2(ê±°ë¦¬ë°–ì— ë¹„ì½˜ ê°ì§€), 3(ë¹„ì½˜ì„ ì°¾ì„ìˆ˜ ì—†ìŒ)
+      "ATTEND_FLAG": "00/01/10/11",   //00(ì¶œì„), 01(ì§€ê°), 10(ìœ ê³ ), 11(ê²°ì„)
       "CLASS_CODE": "A1818",
       "CLASS_NO": "01",
-      "CLASS_NAME": "ÇÁ·ÎÁ§Æ®¼³°è",
+      "CLASS_NAME": "í”„ë¡œì íŠ¸ì„¤ê³„",
       "CTIME": "1/2/3",
       "WEEK": "11"
     }
   ]
 }
+</code></pre>
