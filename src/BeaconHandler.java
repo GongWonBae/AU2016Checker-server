@@ -187,10 +187,12 @@ public class BeaconHandler {
 		}
 		return Integer.parseInt(DAY);
 	}
+	
 
 	public int getDbTime() {
 		String DAY = null;
 		String TIME = null;
+		String e="ee";
 		try {
 			psmt = con.prepareStatement("select to_days(now_time), time_to_sec(now_time) from classlog"
 					+ " where class_id = ? and class_no = ? and ctime = ? and week = ? ");
