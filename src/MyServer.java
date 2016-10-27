@@ -38,7 +38,6 @@ public class MyServer {
 
             ChannelFuture f = b.bind(8888).sync();
 
-            System.out.println("test");
             f.channel().closeFuture().sync();
         }
         finally {
