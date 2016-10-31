@@ -421,7 +421,7 @@ public class BeaconHandler {
 				Jsonobj.put("CLASS_NO", classno);
 				Jsonobj.put("CLASS_ID", classid);
 				Jsonobj.put("WEEK", week);
-				Jsonobj.put("TIME", dttm);
+				Jsonobj.put("DATE", dttm);
 				Jsonobj.put("BEACON_FLAG", beacon_flag);
 				Jsonobj.put("ATTEND_FLAG", myctime);
 				Jsonobj.put("CTIME",tempctime);
