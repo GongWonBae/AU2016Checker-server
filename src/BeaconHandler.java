@@ -407,7 +407,6 @@ public class BeaconHandler {
 			
 			rs = psmt.executeQuery();
 			if (rs.next()) {
-				System.out.println("test");
 				Jsonobj = new JSONObject();
 				int i = 1;
 				String classid = rs.getString(i++);
