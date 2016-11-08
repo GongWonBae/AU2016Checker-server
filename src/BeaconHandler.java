@@ -19,7 +19,7 @@ public class BeaconHandler {
 	private String classroom = null;
 	private String ctime = null;
 	private String attend_flag = null;
-	private int beacon_flag = -1; // 비콘 거리안에 있으면 0 멀면 1, 찾을수 없으면 2
+	private int beacon_flag = 2; // 비콘 거리안에 있으면 0 멀면 1, 찾을수 없으면 2
 	private Connection con = null;
 	int LATE_TIME_SECOND = 900; // 900초 15분
 	ResultSet rs = null;
