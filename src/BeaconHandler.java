@@ -246,7 +246,7 @@ public class BeaconHandler {
 		int update_num = 0;
 		try {
 			if (beacon_flag == 0) {
-				psmt = con.prepareStatement("select * from result where student_id= ? and class_id = ? and class_no = ? and week = ?");
+				psmt = con.prepareStatement("select ctime1, ctime2, ctime3 from result where student_id= ? and class_id = ? and class_no = ? and week = ?");
 				psmt.setString(1, sid);
 				psmt.setString(2, class_code);
 				psmt.setString(3, class_no);
@@ -255,12 +255,12 @@ public class BeaconHandler {
 				//psmt = null;
 				System.out.println("LIEN test");
 				if (rs.next()) { // 이미 저장된 해당 주차 결과값이 있으면
-					if (Integer.parseInt(ctime) == 1) {
-						/*
-						 * psmt = con.prepareStatement("insert into result " +
-						 * "(student_id,class_id,class_no, week,ctime1) " +
-						 * "values (?,?,?,?,'00')");
-						 */
+					int i = 1;
+					String dbctime1 = rs.getString(i++);
+					String dbctime2 = rs.getString(i++);
+					String dbctime3 = rs.getString(i++);
+					
+					if (Integer.parseInt(ctime) == 1 && dbctime1.equals(null)) {
 						psmt = con.prepareStatement("update result " + "set ctime1 = ? "
 								+ "where student_id= ? and class_id = ? and class_no = ? and week = ?");
 						psmt.setString(1, attend_flag);
@@ -269,7 +269,7 @@ public class BeaconHandler {
 						psmt.setString(4, class_no);
 						psmt.setString(5, week);
 						update_num = psmt.executeUpdate();
-					} else if (Integer.parseInt(ctime) == 2) {
+					} else if (Integer.parseInt(ctime) == 2 && dbctime2.equals(null)) {
 						psmt = con.prepareStatement("update result " + "set ctime2 = ? "
 								+ "where student_id= ? and class_id = ? and class_no = ? and week = ?");
 						psmt.setString(1, attend_flag);
@@ -278,7 +278,7 @@ public class BeaconHandler {
 						psmt.setString(4, class_no);
 						psmt.setString(5, week);
 						update_num = psmt.executeUpdate();
-					} else if (Integer.parseInt(ctime) == 3) {
+					} else if (Integer.parseInt(ctime) == 3  && dbctime3.equals(null)) {
 						psmt = con.prepareStatement("update result " + "set ctime3 = ?  "
 								+ "where student_id= ? and class_id = ? and class_no = ? and week = ?");
 						psmt.setString(1, attend_flag);

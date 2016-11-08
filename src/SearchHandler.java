@@ -57,6 +57,21 @@ public class SearchHandler {
 				//System.out.println(result);
 			}
 			else {
+				jobj = new JSONObject();
+				jobj.put("CLASS_NAME",null);
+				jobj.put("CLASS_NO",null);
+				jobj.put("CLASS_ID",null);
+				jobj.put("CLASS_ROOM",null);
+				jobj.put("WEEK", null);
+				jobj.put("CTIME", null);
+				jarry.add(jobj);
+				Jsonobj.put("SUBJECT",jarry);
+				Jsonobj.put("SUBJECT_NUM",0);
+				jarry= new JSONArray();
+				jarry.add(Jsonobj);
+				Jsonobj=new JSONObject();
+				Jsonobj.put("SEARCH_RESULT", jarry);
+				result =Jsonobj.toJSONString();
 				System.out.println("you don't have available subject ");
 			}
 		

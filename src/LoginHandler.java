@@ -22,7 +22,6 @@ public class LoginHandler {
 			System.out.println("-------Login Constructor Start-------"); //생성자는 파싱을 끝내고 sid와 pw를 임시 저장한다.
 			jsonObj = (JSONObject) jsonParser.parse(logJson);
 			JSONArray memberArray = null;
-
 			memberArray = (JSONArray) jsonObj.get("Login");
 			for (int i = 0; i < memberArray.size(); i++) {
 				JSONObject tempObj = (JSONObject) memberArray.get(i);
@@ -88,7 +87,6 @@ public class LoginHandler {
 			jobj.put("NAME", name);
 			jarry= new JSONArray();
 			jarry.add(jobj);
-			
 			Jsonobj=new JSONObject();
 			Jsonobj.put("LOGIN_RESULT", jarry);
 			str =Jsonobj.toJSONString();
@@ -99,7 +97,6 @@ public class LoginHandler {
 			jobj.put("NAME", name);
 			jarry= new JSONArray();
 			jarry.add(jobj);
-			
 			Jsonobj=new JSONObject();
 			Jsonobj.put("LOGIN_RESULT", jarry);
 			str =Jsonobj.toJSONString();
